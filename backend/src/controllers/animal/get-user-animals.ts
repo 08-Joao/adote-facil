@@ -1,28 +1,24 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import {
   GetUserAnimalsService,
   getUserAnimalsServiceInstance,
 } from '../../services/animal/get-user.js'
+import { BaseController } from '../../utils/controller-base.js'
 
-class GetUserAnimalsController {
-  constructor(private readonly getUserAnimals: GetUserAnimalsService) {}
+export class GetUserAnimalsController extends BaseController {
+  constructor(private readonly getUserAnimals: GetUserAnimalsService) {
+    super()
+  }
 
-  async handle(request: Request, response: Response): Promise<Response> {
+  protected extractParams(request: Request) {
     const { user } = request
-
-    try {
-      const result = await this.getUserAnimals.execute({
-        userId: user?.id || '',
-      })
-
-      const statusCode = result.isFailure() ? 400 : 200
-
-      return response.status(statusCode).json(result.value)
-    } catch (err) {
-      const error = err as Error
-      console.error('Error creating animal:', error)
-      return response.status(500).json({ error: error.message })
+    return {
+      userId: user?.id || '',
     }
+  }
+
+  protected async execute(params: any) {
+    return this.getUserAnimals.execute(params)
   }
 }
 

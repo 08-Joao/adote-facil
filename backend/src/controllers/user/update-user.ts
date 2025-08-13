@@ -1,30 +1,26 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import {
   UpdateUserService,
   updateUserServiceInstance,
 } from '../../services/user/update-user.js'
+import { BaseController } from '../../utils/controller-base.js'
 
-class UpdateUserController {
-  constructor(private readonly updateUser: UpdateUserService) {}
+export class UpdateUserController extends BaseController {
+  constructor(private readonly updateUser: UpdateUserService) {
+    super()
+  }
 
-  async handle(request: Request, response: Response): Promise<Response> {
+  protected extractParams(request: Request) {
     const { name, email, password } = request.body
     const { user } = request
-
-    try {
-      const result = await this.updateUser.execute({
-        id: user?.id || '',
-        data: { name, email, password },
-      })
-
-      const statusCode = result.isFailure() ? 400 : 200
-
-      return response.status(statusCode).json(result.value)
-    } catch (err) {
-      const error = err as Error
-      console.log({ error })
-      return response.status(500).json({ error: error.message })
+    return {
+      id: user?.id || '',
+      data: { name, email, password },
     }
+  }
+
+  protected async execute(params: any) {
+    return this.updateUser.execute(params)
   }
 }
 

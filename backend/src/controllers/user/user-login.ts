@@ -1,26 +1,22 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import {
   UserLoginService,
   userLoginServiceInstance,
 } from '../../services/user/user-login.js'
+import { BaseController } from '../../utils/controller-base.js'
 
-class UserLoginController {
-  constructor(private readonly userLogin: UserLoginService) {}
+export class UserLoginController extends BaseController {
+  constructor(private readonly userLogin: UserLoginService) {
+    super()
+  }
 
-  async handle(request: Request, response: Response): Promise<Response> {
+  protected extractParams(request: Request) {
     const { email, password } = request.body
+    return { email, password }
+  }
 
-    try {
-      const result = await this.userLogin.execute({ email, password })
-
-      const statusCode = result.isFailure() ? 400 : 201
-
-      return response.status(statusCode).json(result.value)
-    } catch (err) {
-      const error = err as Error
-      console.log({ error })
-      return response.status(500).json({ error: error.message })
-    }
+  protected async execute(params: any) {
+    return this.userLogin.execute(params)
   }
 }
 
