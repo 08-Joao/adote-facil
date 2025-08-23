@@ -1,26 +1,22 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import {
   CreateUserService,
   createUserServiceInstance,
 } from '../../services/user/create-user.js'
+import { BaseController } from '../../utils/controller-base.js'
 
-class CreateUserController {
-  constructor(private readonly createUser: CreateUserService) {}
+export class CreateUserController extends BaseController {
+  constructor(private readonly createUser: CreateUserService) {
+    super()
+  }
 
-  async handle(request: Request, response: Response): Promise<Response> {
+  protected extractParams(request: Request) {
     const { name, email, password } = request.body
+    return { name, email, password }
+  }
 
-    try {
-      const result = await this.createUser.execute({ name, email, password })
-
-      const statusCode = result.isFailure() ? 400 : 201
-
-      return response.status(statusCode).json(result.value)
-    } catch (err) {
-      const error = err as Error
-      console.log({ error })
-      return response.status(500).json({ error: error.message })
-    }
+  protected async execute(params: any) {
+    return this.createUser.execute(params)
   }
 }
 

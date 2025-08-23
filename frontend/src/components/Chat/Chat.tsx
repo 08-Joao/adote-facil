@@ -8,6 +8,7 @@ import { getCookie } from 'cookies-next'
 import { getUserChat } from '@/api/get-user-chat'
 import { format } from 'date-fns'
 import { sendChatMessage } from '@/api/send-chat-message'
+import { ChatUtils } from '@/utils/chat-utils'
 
 interface ChatProps {
   chatId: string
@@ -48,18 +49,16 @@ export function ChatComponent({
 
     const messageToSend = e.target[0].value
 
-    if (!messageToSend) {
+    if (!messageToSend || !chat || !userData) {
       return
     }
 
     const token = getCookie('token')
-
-    const receiverId =
-      chat?.user1.id === userData?.id ? chat?.user2.id : chat?.user1.id
+    const receiverId = ChatUtils.getReceiverId(chat, userData.id)
 
     try {
       const response = await sendChatMessage(token || '', {
-        receiverId: receiverId || '',
+        receiverId,
         content: messageToSend,
       })
 
@@ -87,9 +86,7 @@ export function ChatComponent({
         </S.GoBackButton>
 
         <span>
-          {chat?.user1.id === userData?.id
-            ? chat?.user2.name
-            : chat?.user1.name}
+          {chat ? ChatUtils.getReceiverName(chat, userData?.id || '') : ''}
         </span>
       </S.ChatHeader>
 
@@ -97,9 +94,9 @@ export function ChatComponent({
         {chat?.messages.map((message) => (
           <S.ChatMessageWrapper
             key={message.id}
-            $isUserMessage={message.senderId === userData?.id}
+            $isUserMessage={ChatUtils.isUserMessage(message.senderId, userData?.id || '')}
           >
-            <S.ChatMessage $isUserMessage={message.senderId === userData?.id}>
+            <S.ChatMessage $isUserMessage={ChatUtils.isUserMessage(message.senderId, userData?.id || '')}>
               <span>{message.content}</span>
               <span>
                 {format(new Date(message.createdAt), 'dd/MM/yyyy HH:mm:ss')}

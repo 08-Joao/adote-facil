@@ -1,32 +1,28 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import {
   UpdateAnimalStatusService,
   updateAnimalStatusServiceInstance,
 } from '../../services/animal/update-animal-status.js'
+import { BaseController } from '../../utils/controller-base.js'
 
-class UpdateAnimalStatusController {
-  constructor(private readonly updateAnimalStatus: UpdateAnimalStatusService) {}
+export class UpdateAnimalStatusController extends BaseController {
+  constructor(private readonly updateAnimalStatus: UpdateAnimalStatusService) {
+    super()
+  }
 
-  async handle(request: Request, response: Response): Promise<Response> {
+  protected extractParams(request: Request) {
     const { status } = request.body
     const { id } = request.params
     const { user } = request
-
-    try {
-      const result = await this.updateAnimalStatus.execute({
-        id,
-        status,
-        userId: user?.id || '',
-      })
-
-      const statusCode = result.isFailure() ? 400 : 200
-
-      return response.status(statusCode).json(result.value)
-    } catch (err) {
-      const error = err as Error
-      console.error('Error updating animal:', error)
-      return response.status(500).json({ error: error.message })
+    return {
+      id,
+      status,
+      userId: user?.id || '',
     }
+  }
+
+  protected async execute(params: any) {
+    return this.updateAnimalStatus.execute(params)
   }
 }
 

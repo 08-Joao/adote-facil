@@ -1,34 +1,30 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import {
   GetAvailableAnimalsService,
   getAvailableAnimalsServiceInstance,
 } from '../../services/animal/get-available.js'
+import { BaseController } from '../../utils/controller-base.js'
 
-class GetAvailableAnimalsController {
+export class GetAvailableAnimalsController extends BaseController {
   constructor(
     private readonly getAvailableAnimals: GetAvailableAnimalsService,
-  ) {}
+  ) {
+    super()
+  }
 
-  async handle(request: Request, response: Response): Promise<Response> {
+  protected extractParams(request: Request) {
     const { user } = request
     const { gender, type, name } = request.query
-
-    try {
-      const result = await this.getAvailableAnimals.execute({
-        userId: user?.id || '',
-        gender: gender ? String(gender) : undefined,
-        type: type ? String(type) : undefined,
-        name: name ? String(name) : undefined,
-      })
-
-      const statusCode = result.isFailure() ? 400 : 200
-
-      return response.status(statusCode).json(result.value)
-    } catch (err) {
-      const error = err as Error
-      console.error('Error creating animal:', error)
-      return response.status(500).json({ error: error.message })
+    return {
+      userId: user?.id || '',
+      gender: gender ? String(gender) : undefined,
+      type: type ? String(type) : undefined,
+      name: name ? String(name) : undefined,
     }
+  }
+
+  protected async execute(params: any) {
+    return this.getAvailableAnimals.execute(params)
   }
 }
 

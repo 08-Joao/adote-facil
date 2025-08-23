@@ -11,10 +11,9 @@ import { DefaultDialog } from '../DefaultDialog'
 import { Button } from '../Button'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { getCookie } from 'cookies-next'
-import { animalRegister } from '@/api/register-animal'
 import { AnimalTypeEnum } from '@/enums/animal-type'
 import { AnimalGenderEnum } from '@/enums/animal-gender'
+import { useAnimalRegistration } from '@/hooks/useAnimalRegistration'
 
 const animalRegisterFormSchema = z.object({
   name: z.string().min(1, { message: 'O nome é obrigatório' }),
@@ -43,6 +42,7 @@ export type AnimalRegisterFormData = z.infer<typeof animalRegisterFormSchema>
 export function AnimalRegisterForm() {
   const [animalPictures, setAnimalPictures] = useState<File[]>([])
   const [maxPicsWarningModalOpen, setMaxPicsWarningModalOpen] = useState(false)
+  const { registerAnimal, isLoading, error } = useAnimalRegistration()
 
   const {
     register,
@@ -85,24 +85,11 @@ export function AnimalRegisterForm() {
   }
 
   const onSubmit = async (data: AnimalRegisterFormData) => {
-    try {
-      const token = getCookie('token')
-
-      const response = await animalRegister(data, token)
-
-      if (response.status === 201) {
-        alert('Animal cadastrado com sucesso!')
-        window.location.href = '/area_logada/meus_animais'
-      } else {
-        alert(
-          response.data.message ||
-            'Ocorreu um erro ao tentar registrar o animal.',
-        )
-      }
-    } catch (err) {
-      const error = err as Error
-      console.error('Erro no registro do animal:', error)
-      alert(error.message || 'Ocorreu um erro ao tentar registrar o animal.')
+    const result = await registerAnimal(data)
+    
+    if (result.success) {
+      alert('Animal cadastrado com sucesso!')
+      window.location.href = '/area_logada/meus_animais'
     }
   }
 

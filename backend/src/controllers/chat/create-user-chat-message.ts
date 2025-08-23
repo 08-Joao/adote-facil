@@ -1,31 +1,29 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import {
   CreateUserChatMessageService,
   createUserChatMessageServiceInstance,
 } from '../../services/chat/create-user-chat-message.js'
+import { BaseController } from '../../utils/controller-base.js'
 
-class CreateUserChatMessageController {
+export class CreateUserChatMessageController extends BaseController {
   constructor(
     private readonly createUserChatMessage: CreateUserChatMessageService,
-  ) {}
+  ) {
+    super()
+  }
 
-  async handle(request: Request, response: Response): Promise<Response> {
+  protected extractParams(request: Request) {
     const { receiverId, content } = request.body
     const { user } = request
-
-    try {
-      const result = await this.createUserChatMessage.execute({
-        senderId: user?.id || '',
-        receiverId,
-        content,
-      })
-
-      return response.status(201).json(result)
-    } catch (err) {
-      const error = err as Error
-      console.log({ error })
-      return response.status(500).json({ error: error.message })
+    return {
+      senderId: user?.id || '',
+      receiverId,
+      content,
     }
+  }
+
+  protected async execute(params: any) {
+    return this.createUserChatMessage.execute(params)
   }
 }
 
