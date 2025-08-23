@@ -8,7 +8,7 @@ export function getAvailableAnimals(
   const params = filter ? { ...filter } : {}
 
   return makeRequest({
-    url: `${process.env.NEXT_PUBLIC_API_URL}/animals/available`,
+    url: '/animals/available',
     method: 'GET',
     params,
     headers: { Authorization: `Bearer ${token}` },

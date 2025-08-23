@@ -3,7 +3,7 @@ import { makeRequest } from '.'
 
 export async function registerUser(data: CreateUserFormData) {
   return makeRequest({
-    url: `${process.env.NEXT_PUBLIC_API_URL}/users`,
+    url: '/users',
     method: 'POST',
     data,
   })

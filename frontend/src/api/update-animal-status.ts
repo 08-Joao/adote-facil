@@ -11,7 +11,7 @@ export async function updateAnimalStatus({
   data: { status: AnimalStatus }
 }) {
   return makeRequest({
-    url: `${process.env.NEXT_PUBLIC_API_URL}/animals/${animalId}`,
+    url: `/animals/${animalId}`,
     headers: { Authorization: `Bearer ${token}` },
     method: 'PATCH',
     data,

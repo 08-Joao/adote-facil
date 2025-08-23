@@ -1,5 +1,4 @@
 import { Chat } from '@/@types/chat'
-import { UserData } from '@/@types/user-data'
 
 export class ChatUtils {
   static getReceiverId(chat: Chat, currentUserId: string): string {
@@ -18,7 +17,10 @@ export class ChatUtils {
     return chat.user1.id === currentUserId ? chat.user2.name : chat.user1.name
   }
 
-  static isUserMessage(messageSenderId: string, currentUserId: string): boolean {
+  static isUserMessage(
+    messageSenderId: string,
+    currentUserId: string,
+  ): boolean {
     return messageSenderId === currentUserId
   }
-} 
+}

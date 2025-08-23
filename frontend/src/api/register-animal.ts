@@ -15,7 +15,7 @@ export function animalRegister(data: AnimalRegisterFormData, token?: string) {
   })
 
   return makeRequest({
-    url: `${process.env.NEXT_PUBLIC_API_URL}/animals`,
+    url: '/animals',
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',

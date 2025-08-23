@@ -1,6 +1,11 @@
 import axios, { AxiosError } from 'axios'
 
-const api = axios.create()
+// Configuração da URL da API
+const API_BASE_URL = 'http://localhost:8080'
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+})
 
 export async function makeRequest({
   url,

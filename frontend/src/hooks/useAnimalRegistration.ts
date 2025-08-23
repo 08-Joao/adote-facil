@@ -18,14 +18,17 @@ export function useAnimalRegistration() {
       if (response.status === 201) {
         return { success: true }
       } else {
-        const errorMessage = response.data.message || 'Ocorreu um erro ao tentar registrar o animal.'
+        const errorMessage =
+          response.data.message ||
+          'Ocorreu um erro ao tentar registrar o animal.'
         setError(errorMessage)
         return { success: false, error: errorMessage }
       }
     } catch (err) {
       const error = err as Error
       console.error('Erro no registro do animal:', error)
-      const errorMessage = error.message || 'Ocorreu um erro ao tentar registrar o animal.'
+      const errorMessage =
+        error.message || 'Ocorreu um erro ao tentar registrar o animal.'
       setError(errorMessage)
       return { success: false, error: errorMessage }
     } finally {
@@ -34,4 +37,4 @@ export function useAnimalRegistration() {
   }
 
   return { registerAnimal, isLoading, error }
-} 
+}

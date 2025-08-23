@@ -42,7 +42,7 @@ export type AnimalRegisterFormData = z.infer<typeof animalRegisterFormSchema>
 export function AnimalRegisterForm() {
   const [animalPictures, setAnimalPictures] = useState<File[]>([])
   const [maxPicsWarningModalOpen, setMaxPicsWarningModalOpen] = useState(false)
-  const { registerAnimal, isLoading, error } = useAnimalRegistration()
+  const { registerAnimal } = useAnimalRegistration()
 
   const {
     register,
@@ -86,13 +86,12 @@ export function AnimalRegisterForm() {
 
   const onSubmit = async (data: AnimalRegisterFormData) => {
     const result = await registerAnimal(data)
-    
+
     if (result.success) {
       alert('Animal cadastrado com sucesso!')
       window.location.href = '/area_logada/meus_animais'
     }
   }
-
   return (
     <>
       <Dialog.Root

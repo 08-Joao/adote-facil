@@ -94,9 +94,17 @@ export function ChatComponent({
         {chat?.messages.map((message) => (
           <S.ChatMessageWrapper
             key={message.id}
-            $isUserMessage={ChatUtils.isUserMessage(message.senderId, userData?.id || '')}
+            $isUserMessage={ChatUtils.isUserMessage(
+              message.senderId,
+              userData?.id || '',
+            )}
           >
-            <S.ChatMessage $isUserMessage={ChatUtils.isUserMessage(message.senderId, userData?.id || '')}>
+            <S.ChatMessage
+              $isUserMessage={ChatUtils.isUserMessage(
+                message.senderId,
+                userData?.id || '',
+              )}
+            >
               <span>{message.content}</span>
               <span>
                 {format(new Date(message.createdAt), 'dd/MM/yyyy HH:mm:ss')}

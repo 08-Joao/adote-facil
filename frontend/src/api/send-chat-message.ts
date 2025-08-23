@@ -7,7 +7,7 @@ type SendMessageData = {
 
 export function sendChatMessage(token: string, data: SendMessageData) {
   return makeRequest({
-    url: `${process.env.NEXT_PUBLIC_API_URL}/users/chats/messages`,
+    url: '/users/chats/messages',
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` },
     data,
