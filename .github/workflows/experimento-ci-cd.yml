@@ -35,6 +35,12 @@ jobs:
           cd backend
           npm ci
 
+      # Gerar Prisma Client antes dos testes
+      - name: Gerar Prisma Client
+        run: |
+          cd backend
+          npx prisma generate
+
       # execução dos testes
       - name: Executar testes unitários com Jest
         run: |
