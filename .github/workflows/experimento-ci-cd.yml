@@ -69,36 +69,20 @@ jobs:
     needs: build  # Esse job depende do job 'build'
     runs-on: ubuntu-latest
 
-    # Definição de variáveis de ambiente necessárias para o backend e banco
-    env:
-      POSTGRES_DB: adote_facil
-      POSTGRES_HOST: adote-facil-postgres
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}  # Usuário do banco, vindo dos segredos do repositório
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}  # Senha do banco
-      POSTGRES_PORT: 5432
-      POSTGRES_CONTAINER_PORT: 6500
-
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Criar arquivo example.env
-        working-directory: ./backend  # Define o diretório de trabalho para esse passo
-        run: |
-          # Gera o arquivo .env com as variáveis definidas acima
-          echo "POSTGRES_DB=${{ env.POSTGRES_DB }}" > .env
-          echo "POSTGRES_HOST=${{ env.POSTGRES_HOST }}" >> .env
-          echo "POSTGRES_USER=${{ env.POSTGRES_USER }}" >> .env
-          echo "POSTGRES_PASSWORD=${{ env.POSTGRES_PASSWORD }}" >> .env
-          echo "POSTGRES_PORT=${{ env.POSTGRES_PORT }}" >> .env
-          echo "POSTGRES_CONTAINER_PORT=${{ env.POSTGRES_CONTAINER_PORT }}" >> .env
-
       - name: Subir containers com Docker Compose
         working-directory: ./backend
         run: |
-          docker compose up -d     # Sobe os containers em segundo plano
-          sleep 10                 # Aguarda alguns segundos para garantir que os serviços subam
-          docker compose down      # Encerra os containers após o teste
+          # Sobe os containers usando variáveis de ambiente
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+          docker compose up -d
+          
+          sleep 10
+          docker compose down
 
   # Quarto job: Geração e entrega do artefato do projeto
   delivery:
