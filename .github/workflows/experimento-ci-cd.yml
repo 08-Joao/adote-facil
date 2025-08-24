@@ -12,20 +12,31 @@ jobs:
 
   # Primeiro job: Executar testes unitários
   unit-test:
-    runs-on: ubuntu-latest  # Define o sistema operacional usado no runner (Ubuntu na versão mais recente)
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout do código
-        uses: actions/checkout@v4  # Faz o download do repositório no runner
+        uses: actions/checkout@v4
 
+      # cache de dependências
+      - name: Cache de dependências do npm
+        uses: actions/cache@v3
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      # usa npm ci em vez de npm install
       - name: Instalar dependências do backend
         run: |
-          cd backend              # Acessa a pasta do backend
-          npm install             # Instala as dependências do Node.js
+          cd backend
+          npm ci
 
+      # execução dos testes
       - name: Executar testes unitários com Jest
         run: |
-          cd backend              # Acessa novamente a pasta do backend
-          npm test -- --coverage  # Executa os testes e gera relatório de cobertura
+          cd backend
+          npm test -- --coverage
 
   # Segundo job: Build (construção) das imagens Docker
   build:
@@ -62,7 +73,7 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Criar arquivo .env
+      - name: Criar arquivo example.env
         working-directory: ./backend  # Define o diretório de trabalho para esse passo
         run: |
           # Gera o arquivo .env com as variáveis definidas acima

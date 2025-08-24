@@ -3,7 +3,7 @@ services:
     image: postgres:14-alpine
     container_name: 'adote-facil-postgres'
     env_file:
-      - ./backend/.env
+      - backend/example.env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -15,6 +15,7 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       - adote-facil-network
+    # hC:\Users\cedev\WebstormProjects\adote-facilealthcheck para confiabilidade
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 3s
@@ -23,7 +24,7 @@ services:
 
   adote-facil-backend:
     env_file:
-      - ./backend/.env
+      - backend/example.env
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -34,7 +35,7 @@ services:
       - NODE_ENV=production
     depends_on:
       adote-facil-postgres:
-        condition: service_healthy
+        condition: service_healthy  # aguarda healthcheck
     command: sh -c "until nc -z adote-facil-postgres 5432; do echo 'Waiting for postgres...'; sleep 1; done; npm start"
     networks:
       - adote-facil-network
