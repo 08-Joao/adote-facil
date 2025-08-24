@@ -6,6 +6,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - Topico6
 
 # Definição dos jobs (tarefas) que serão executadas
 jobs:
